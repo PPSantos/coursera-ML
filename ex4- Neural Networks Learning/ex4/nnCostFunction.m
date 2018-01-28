@@ -58,26 +58,53 @@ Theta2_grad = zeros(size(Theta2));
 %
 %         Hint: You can implement this around the code for
 %               backpropagation. That is, you can compute the gradients for
-%               the regularization separately and then add them to Theta1_grad
+%               the regularization separat\ely and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
 
 
+% One hot encode y.
+y = y == 1:max(y);
+
+% -------- Forward pass --------
+% Input layer.
+a1 = [ones(m, 1) X];
+
+% Hidden layer.
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+a2 = [ones(size(a2, 1), 1) a2];
+
+% Output layer.
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
+h_theta = a3
+
+% Loss computation (with regularization).
+loss = (1/m) * sum(sum( -y .*log(h_theta) - (1-y) .*log(1 - h_theta) ));
+
+reg = (lambda/(2*m)) * ( sum(sum(Theta1(:,2:end).^2)) + \
+             sum(sum(Theta2(:,2:end).^2)) );
+
+J = loss + reg;
 
 
+% -------- Backward pass --------
+d_a3 = a3 - y;
 
+z2 = [ones(m,1) z2];
+d_a2 = d_a3 * Theta2 .* sigmoidGradient(z2);
+d_a2 = d_a2(:, 2:end);
 
+d_theta1 = d_a2' * a1;
+d_theta2 = d_a3' * a2;
 
+Theta1_grad = (1/m) .* d_theta1;
+Theta2_grad = (1/m) .* d_theta2;
 
-
-
-
-
-
-
-
-
-
+% Regularization.
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + (lambda/m) * Theta1(:, 2:end);
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + (lambda/m) * Theta2(:, 2:end);
 
 
 % -------------------------------------------------------------
