@@ -23,11 +23,25 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+best_error = inf;
 
+for C_ = [0.01 0.03 0.1 0.3 1, 3, 10 30]
+  for sigma_ = [0.01 0.03 0.1 0.3 1, 3, 10 30]
 
+    model = svmTrain(X, y, C_, @(x1, x2) gaussianKernel(x1, x2, sigma_));
 
+    error = mean(double(svmPredict(model, Xval) ~= yval));
+    
+    if(error <= best_error)
+      C = C_;
+      sigma = sigma_;
+      best_error = error;
+    
+    end
+  end
+end
 
-
+fprintf('C: %f \n Sigma: %f \n Error: %f \n', C, sigma, best_error);
 
 % =========================================================================
 
