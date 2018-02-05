@@ -1,2 +1,2 @@
 # coursera-ML
-Coursera - Machine Learning - Completed assignments. 
+Coursera - Machine Learning <br> Completed assignments. 
